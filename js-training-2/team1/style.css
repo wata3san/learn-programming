@@ -9,3 +9,12 @@ textarea {
   width: 30%;
   height: 10em;
 }
+
+#alert{
+  list-style-type: none;
+  padding-left: 0;
+}
+
+#alert li{
+  color: red;
+}

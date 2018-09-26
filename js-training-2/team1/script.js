@@ -2,22 +2,32 @@
  * メンバーを抽選する
  */
 function chooseMember() {
+  /* formタグ取得 */
   const form = document.form1;
+  /* 参加者一覧を取得 */
   const names = form.names.value;
+  /* 参加者一覧を配列にする */
   const orig_list = names.split('\n');
+  /* 参加者一覧配列から空の要素を削除 */
   let list = removeEmptyStringValueFromArray(orig_list);
-
+  /* 参加者一覧に空要素を無くした値を返す */
   form.names.value = list.join('\n');
+  /* チーム数 */
   const count = form.num.value;
+  /* チーム分け結果後の配列 */
   let winners = [];
+  /* sub-titleの取得 */
+  const subtitle = document.getElementById('sub-title');
+  /* 参加者数 */
+  let participants_num = list.length;
+  /* チーム数 参加者数をサブタイトルに表示 */
+  subtitle.innerHTML ="参加者" + participants_num + "人中、" + count + "チームに分ける";
 
   if (validation(list, count)) {
     const group_array = getGroupMembers(count, list.length);
-
     // 指定されたチーム数分だけ for で回す
     for (let i = 0; i < count; i++) {
       let members = [];
-
       for (let j = 0; j < group_array[i]; j++ ) {
         /**
          * 乱数の取得に関して、このサイトがわかりやすいです。
@@ -26,11 +36,9 @@ function chooseMember() {
         const chosen_index = Math.floor(Math.random() * list.length);
         // 当選者を当選者用配列に詰める
         members.push(list[chosen_index]);
-
         // 参加者リストから、選んだメンバーを除外する
         list.splice(chosen_index, 1);
       }
-
       winners.push(members);
     }
     output(winners);
@@ -47,15 +55,12 @@ function getGroupMembers(group_num, total) {
   let surplus = total % group_num;
   let group_members = Math.floor(total / group_num);
   let groups = [];
-
   for (let i = 0; i < group_num; i++ ) {
     groups.push(group_members);
-
   }
   for (let i = 0; i < surplus; i++ ) {
     groups[i] += 1;
   }
-
   return groups;
 }
 
@@ -66,13 +71,11 @@ function getGroupMembers(group_num, total) {
  */
 function removeEmptyStringValueFromArray(array) {
   let list = [];
-
   for (let i = 0, l = array.length; i < l; i++) {
     if (array[i] !== '' ) {
       list.push(array[i]);
     }
   }
-
   return list;
 }
 
@@ -83,14 +86,12 @@ function removeEmptyStringValueFromArray(array) {
 function output(winners) {
   let elem = document.getElementById('js-list');
   elem.innerText = '';
-
   let ol = document.createElement('ol');
   for(let i = 0; i < winners.length; i++) {
     let li = document.createElement('li');
     li.innerText = winners[i];
     ol.appendChild(li);
   }
-
   elem.appendChild(ol);
 }
 
@@ -101,31 +102,22 @@ function output(winners) {
  * @returns {boolean}
  */
 function validation(list, count) {
+  /* alertタグを取得 */
   let alert = document.getElementById('alert');
   alert.innerText = '';
+  /* 参加者一覧がない場合 */
   if (list.length === 0) {
     let li = document.createElement('li');
-    li.innerText = '応募者を入力してください';
+    li.innerText = '参加者を入力してください';
     alert.appendChild(li);
-
     return false;
   }
-
+  /* チーム数が０以下の場合 */
   if (count < 1) {
     let li = document.createElement('li');
-    li.innerText = '当選者数を入力してください';
+    li.innerText = 'チーム数を入力してください';
     alert.appendChild(li);
-
     return false;
   }
-
-  if (list.length < count) {
-    let li = document.createElement('li');
-    li.innerText = '適切なグループ数を入力してください';
-    alert.appendChild(li);
-
-    return false;
-  }
-
   return true;
 }
